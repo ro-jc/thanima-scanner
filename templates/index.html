@@ -1,40 +1,42 @@
 <!DOCTYPE html>
 <html lang="en">
-
-<head>
-  <meta charset="UTF-8" />
-  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-  <title>Scanner</title>
-  <link rel="stylesheet" type="text/css" href="{{ url_for('static', filename='style.css') }}">
-</head>
-
-<body>
-  <a href='{{ url_for("logout") }}' class="logout">Logout</a>
-  <h2>Thanima Scanner</h2>
-  <div class="container">
-    <a href="?table=wristband">wristband</a>
-    <a href="?table=culturals">culturals</a>
-    <a href="?table=sadhya">sadhya</a>
-    <a href="?table=concert">concert</a>
-  </div>
-  <div class="flash-container">
-    {% with messages = get_flashed_messages(with_categories=true) %}
-    {% if messages %}
-    {% for category, message in messages %}<div class="flash {{ category }}">{{ message }}</div>{% endfor %}
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>Scanner</title>
+    <link rel="stylesheet"
+          type="text/css"
+          href="{{ url_for('static', filename='style.css') }}">
+  </head>
+  <body>
+    <a href='{{ url_for("logout") }}' class="logout">Logout</a>
+    <h2>Thanima Scanner</h2>
+    <div class="container">
+      {% for table_name,class in tables.items() %}
+        <a href="?table={{ table_name }}" class="{{ class }}">{{ table_name }}</a>
+      {% endfor %}
+    </div>
+    <div class="flash-container">
+      {% with messages = get_flashed_messages(with_categories=true) %}
+        {% if messages %}
+          {% for category, message in messages %}<div class="flash {{ category }}">{{ message }}</div>{% endfor %}
+        {% endif %}
+      {% endwith %}
+    </div>
+    {% if table %}
+      <form method="post" id="verify">
+        <input type="hidden" name="csrf_token" value="{{ csrf_token() }}" />
+        <input type="hidden" name="table" value="{{ table }}" />
+        <input type="text"
+               name="registration_number"
+               placeholder="Enter registration number"
+               required />
+        <input type="submit" value="Verify" />
+      </form>
     {% endif %}
-    {% endwith %}
-  </div>
-  {% if table %}
-  <form method="post" id="verify">
-    <input type="hidden" name="csrf_token" value="{{ csrf_token() }}" />
-    <input type="hidden" name="table" value="{{ table }}" />
-    <input type="text" name="registration_number" placeholder="Enter registration number" required />
-    <input type="submit" value="Verify" />
-  </form>
-  {% endif %}
-  <div id="count">{{ count }}</div>
-</body>
-<script>
+    <div id="count">{{ count }}</div>
+  </body>
+  <script>
   function updateCount() {
     let form = document.getElementById("verify");
     if (!form) return;
@@ -42,12 +44,11 @@
     let table = form.children[1].value;
     let countViewer = document.getElementById('count');
 
-    fetch('/getCount/' + table)
+    fetch("/getCount/" + table)
       .then((response) => response.json())
       .then((json) => countViewer.innerHTML = json['count'])
   }
 
   var intervalId = window.setInterval(updateCount, 5000);
-</script>
-
+  </script>
 </html>
