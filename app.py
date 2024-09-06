@@ -112,7 +112,9 @@ def index():
         for table_name in table_map.keys()
     }
 
-    return render_template("index.html", tables=tables, count=count_response["count"])
+    return render_template(
+        "index.html", tables=tables, table=table, count=count_response["count"]
+    )
 
 
 @app.route("/login", methods=["GET", "POST"])
