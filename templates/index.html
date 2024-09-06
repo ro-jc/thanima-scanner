@@ -1,42 +1,49 @@
 <!DOCTYPE html>
 <html lang="en">
-  <head>
-    <meta charset="UTF-8" />
-    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-    <title>Scanner</title>
-    <link rel="stylesheet"
-          type="text/css"
-          href="{{ url_for('static', filename='style.css') }}">
-  </head>
-  <body>
-    <a href='{{ url_for("logout") }}' class="logout">Logout</a>
-    <h2>Thanima Scanner</h2>
-    <div class="container">
-      {% for table_name,class in tables.items() %}
-        <a href="?table={{ table_name }}" class="{{ class }}">{{ table_name }}</a>
-      {% endfor %}
+
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>Scanner</title>
+  <link rel="stylesheet" type="text/css" href="{{ url_for('static', filename='style.css') }}">
+</head>
+
+<body>
+  <div class="header">
+    <div>
+      <img class="thanima_logo" src="{{ url_for('static', filename='images/thanima.png') }}" alt="">
     </div>
-    <div class="flash-container">
-      {% with messages = get_flashed_messages(with_categories=true) %}
-        {% if messages %}
-          {% for category, message in messages %}<div class="flash {{ category }}">{{ message }}</div>{% endfor %}
-        {% endif %}
-      {% endwith %}
+    <div><a href='{{ url_for("logout") }}' class="logout">Logout</a>
     </div>
-    {% if table %}
-      <form method="post" id="verify">
-        <input type="hidden" name="csrf_token" value="{{ csrf_token() }}" />
-        <input type="hidden" name="table" value="{{ table }}" />
-        <input type="text"
-               name="registration_number"
-               placeholder="Enter registration number"
-               required />
-        <input type="submit" value="Verify" />
-      </form>
+  </div>
+
+  <h3>THANIMA - 2024</h3>
+  <h1>event entry verification</h1>
+
+  <div class="container">
+    {% for table_name,class in tables.items() %}
+    <a href="?table={{ table_name }}" class="{{ class }}">{{ table_name }}</a>
+    {% endfor %}
+  </div>
+  {% if table %}
+  <form method="post" id="verify">
+    <input type="hidden" name="csrf_token" value="{{ csrf_token() }}" />
+    <input type="hidden" name="table" value="{{ table }}" />
+    <input class="regInput" type="text" name="registration_number" placeholder="Enter Registration No." required />
+    <input class="verifyBtn " type="submit" value="Verify" />
+  </form>
+  {% endif %}
+  
+  <div class="flash-container">
+    {% with messages = get_flashed_messages(with_categories=true) %}
+    {% if messages %}
+    {% for category, message in messages %}<div class="flash {{ category }}">{{ message }}</div>{% endfor %}
     {% endif %}
-    <div id="count">{{ count }}</div>
-  </body>
-  <script>
+    {% endwith %}
+  </div>
+  <div id="count">{{ count }}</div>
+</body>
+<script>
   function updateCount() {
     let form = document.getElementById("verify");
     if (!form) return;
@@ -50,5 +57,6 @@
   }
 
   var intervalId = window.setInterval(updateCount, 5000);
-  </script>
+</script>
+
 </html>
