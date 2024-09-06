@@ -1,9 +1,9 @@
 body {
   font-family: Arial, sans-serif;
-  max-width: 400px;
+  max-width: 80vw;
   margin: 0 auto;
   padding: 20px;
-  background: #111;
+  background: grey;
   color: white;
   font-family:Arial, Helvetica, sans-serif;
 }
@@ -67,19 +67,20 @@ h2{
 }
 .container{
   display: flex;
-  justify-content: space-around;
+  justify-content: center;
   flex-wrap: wrap;
 }
 .container a{
-  color: maroon;
+  color: white;
   text-transform: uppercase;
   text-decoration: none;
-  font-weight: 700;
-  background: grey;
-  padding: 10px;
-  margin: 10px 0;
-  border-radius: 4px;
+  font-weight: 500;
+  background: rgb(78, 0, 0);
+  padding: 8px;
+  margin: 10px 5px;
 }
 .container a:hover{
-  background: #000;
+  background: white;
+  color: rgb(78, 0, 0);
+  font-weight: 600;
 }
