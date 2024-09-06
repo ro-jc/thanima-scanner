@@ -3,7 +3,7 @@
   <head>
     <meta charset="UTF-8" />
     <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-    <title>Registration Number Verification</title>
+    <title>Scanner</title>
     <style>
       body {
         font-family: Arial, sans-serif;
@@ -52,10 +52,7 @@
     <a href='{{ url_for("logout") }}' class="logout">Logout</a>
     <h2>Thanima Scanner</h2>
     <div class="container">
-      <a href="?table=wristband">wristband</a>
-      <a href="?table=culturals">culturals</a>
-      <a href="?table=sadhya">sadhya</a>
-      <a href="?table=concert">concert</a>
+      {% for table,class in tables.items() %}<a href="?table={{ table }}" class="{{ class }}">{{ table }}</a>{% endfor %}
     </div>
     <div class="flash-container">
       {% with messages = get_flashed_messages(with_categories=true) %}
@@ -64,7 +61,7 @@
         {% endif %}
       {% endwith %}
     </div>
-    {% if table %}
+    {% if 'active' in tables.values() %}
       <form method="post" id="verify">
         <input type="hidden" name="csrf_token" value="{{ csrf_token() }}" />
         <input type="hidden" name="table" value="{{ table }}" />

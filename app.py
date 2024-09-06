@@ -107,7 +107,12 @@ def index():
     if count_response["error"]:
         print(count_response["error"])
 
-    return render_template("index.html", table=table, count=count_response["count"])
+    tables = {
+        table_name: ("active" if table_name == table else "")
+        for table_name in table_map.keys()
+    }
+
+    return render_template("index.html", tables=tables, count=count_response["count"])
 
 
 @app.route("/login", methods=["GET", "POST"])
