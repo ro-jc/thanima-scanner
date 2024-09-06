@@ -9,8 +9,8 @@ from flask_wtf.csrf import CSRFProtect
 
 
 app = Flask(__name__)
-app.config["SECRET_KEY"] = open("secret").read()
-app.config["SQLALCHEMY_DATABASE_URI"] = open("db_url").read()
+app.config["SECRET_KEY"] = open("secret").read().strip()
+app.config["SQLALCHEMY_DATABASE_URI"] = open("db_url").read().strip()
 db = SQLAlchemy(app)
 csrf = CSRFProtect(app)
 # limiter = Limiter(get_remote_address, app=app)
@@ -59,13 +59,17 @@ ADMIN_PASSWORD_HASH = "pbkdf2:sha256:260000$WQNyaZ4k8tNHu6uf$4e471f012f9fbbede80
 @app.route("/getCount/<string:table>")
 def count(table):
     if "logged_in" not in session:
-        return redirect(url_for("login"))
+        return {"count": "", "error": "not logged in"}
 
-    table_obj = table_map[table]
+    if not table:
+        return {"count": "", "error": "no table provided"}
+
+    table_obj = table_map.get(table, None)
     return {
         "count": db.session.query(table_obj)
         .filter(table_obj.is_scanned == True)
-        .count()
+        .count(),
+        "error": "",
     }
 
 
@@ -99,7 +103,11 @@ def index():
         db.session.commit()
 
     table = request.args.get("table", None)
-    return render_template("index.html", table=table, count=count(table)["count"])
+    count_response = count(table=table)
+    if count_response["error"]:
+        print(count_response["error"])
+
+    return render_template("index.html", table=table, count=count_response["count"])
 
 
 @app.route("/login", methods=["GET", "POST"])
