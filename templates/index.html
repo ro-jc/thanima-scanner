@@ -1,0 +1,79 @@
+<!DOCTYPE html>
+<html lang="en">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>Registration Number Verification</title>
+    <style>
+      body {
+        font-family: Arial, sans-serif;
+        max-width: 400px;
+        margin: 0 auto;
+        padding: 20px;
+      }
+      input[type="text"] {
+        width: 100%;
+        padding: 10px;
+        margin: 10px 0;
+      }
+      input[type="submit"] {
+        background-color: #4caf50;
+        color: white;
+        padding: 10px 20px;
+        border: none;
+        cursor: pointer;
+      }
+      .flash-container {
+        height: 60px;
+        overflow: hidden;
+        margin-bottom: 10px;
+      }
+      .flash {
+        padding: 10px;
+        margin: 5px 0;
+        border-radius: 4px;
+      }
+      .flash.error {
+        background-color: #ffebee;
+        color: #c62828;
+        border: 1px solid #ef9a9a;
+      }
+      .flash.success {
+        background-color: #e8f5e9;
+        color: #2e7d32;
+        border: 1px solid #a5d6a7;
+      }
+      .logout {
+        float: right;
+      }
+    </style>
+  </head>
+  <body>
+    <a href='{{ url_for("logout") }}' class="logout">Logout</a>
+    <h2>Thanima Scanner</h2>
+    <div class="container">
+      <a href="?table=wristband">wristband</a>
+      <a href="?table=culturals">culturals</a>
+      <a href="?table=sadhya">sadhya</a>
+      <a href="?table=concert">concert</a>
+    </div>
+    <div class="flash-container">
+      {% with messages = get_flashed_messages(with_categories=true) %}
+        {% if messages %}
+          {% for category, message in messages %}<div class="flash {{ category }}">{{ message }}</div>{% endfor %}
+        {% endif %}
+      {% endwith %}
+    </div>
+    {% if table %}
+      <form method="post" id="verify">
+        <input type="hidden" name="csrf_token" value="{{ csrf_token() }}" />
+        <input type="hidden" name="table" value="{{ table }}" />
+        <input type="text"
+               name="registration_number"
+               placeholder="Enter registration number"
+               required />
+        <input type="submit" value="Verify" />
+      </form>
+    {% endif %}
+  </body>
+</html>
