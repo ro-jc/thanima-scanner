@@ -75,5 +75,21 @@
         <input type="submit" value="Verify" />
       </form>
     {% endif %}
+    <div id="count">{{ count }}</div>
   </body>
+  <script>
+    function updateCount() {
+      let form = document.getElementById("verify"); 
+      if (!form) return;
+
+      let table = form.children[1].value;
+      let countViewer = document.getElementById('count');
+
+      fetch('/getCount/'+table)
+        .then((response) => response.json())
+        .then((json) => countViewer.innerHTML=json['count'])
+    }
+
+    var intervalId = window.setInterval(updateCount, 5000);
+  </script>
 </html>

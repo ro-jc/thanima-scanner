@@ -51,13 +51,16 @@ table_map = {
 with app.app_context():
     db.create_all()
 
-# Hardcoded admin credentials
+# admin credentials
 ADMIN_USERNAME = "admin"
 ADMIN_PASSWORD_HASH = "pbkdf2:sha256:260000$WQNyaZ4k8tNHu6uf$4e471f012f9fbbede80d263c9deba4cfa264808455635f6240a05f5c8da2d234"
 
 
 @app.route("/getCount/<string:table>")
 def count(table):
+    if "logged_in" not in session:
+        return redirect(url_for("login"))
+
     table_obj = table_map[table]
     return {
         "count": db.session.query(table_obj)
@@ -95,7 +98,8 @@ def index():
 
         db.session.commit()
 
-    return render_template("index.html", table=request.args.get("table", None))
+    table = request.args.get("table", None)
+    return render_template("index.html", table=table, count=count(table)["count"])
 
 
 @app.route("/login", methods=["GET", "POST"])
