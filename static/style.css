@@ -76,10 +76,10 @@ h2{
   text-decoration: none;
   font-weight: 500;
   background: rgb(78, 0, 0);
-  padding: 8px;
-  margin: 10px 5px;
+  padding: 8px 30px;
+  margin: 10px 2px;
 }
-.container a:hover{
+.active, .container a:hover{
   background: white;
   color: rgb(78, 0, 0);
   font-weight: 600;
