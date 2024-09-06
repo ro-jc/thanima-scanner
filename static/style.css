@@ -39,8 +39,7 @@ input[type="submit"] {
   color: #c62828;
   border: 1px solid #ef9a9a;
   margin: 10px auto;
-    padding: 15px 5vw;
-
+  padding: 15px 5vw;
 }
 .flash.success {
   display: flex;
@@ -118,12 +117,10 @@ h3 {
   font-size: 1rem;
   opacity: 0.8;
   transition: 0.2s opacity;
-  transition: 0.2s padding;
   margin: 0 4vw;
 }
 .logout:hover {
   opacity: 1;
-  padding: 18px 28px;
 }
 .header {
   display: flex;
@@ -159,26 +156,70 @@ form .regInput {
 form .verifyBtn {
   border-radius: 50px;
   font-size: 1.1rem;
-  padding: 10px 30px;
   opacity: 0.7;
   transition: 0.2s opacity;
   transition: 0.2s padding;
 }
-.verifyBtn:hover{
+.verifyBtn:hover {
   opacity: 1;
+  padding-right: 30px;
+  padding-left: 30px;
 }
-#count{
+#count {
   display: flex;
   justify-content: center;
   align-items: center;
   width: 15vw;
   margin: auto;
-  font-size: 2.5rem;
+  font-size: 2.3rem;
   padding: 10px 10px;
-  border-radius: 2px;
+  border-radius: 5px;
   position: absolute;
   bottom: 5vh;
   right: 5vh;
-  background: #111;
+  background: #222;
   color: white;
+}
+
+.thanima_logo2 {
+  height: 12vh;
+  margin: 3vh auto;
+  text-align: center;
+  display: flex;
+  justify-content: center;
+  margin-bottom: 12vh;
+}
+h2 {
+  text-align: center;
+}
+.loginForm{
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  width: 35vw;
+  margin: 0 auto;
+}
+.loginForm input{
+  border-radius: 50px;
+  font-size: 1.2rem;
+  text-align: center;
+  border: none;
+}
+.login {
+  float: right;
+  background: rgb(78, 0, 0);
+  border-radius: 50px;
+  color: white;
+  text-decoration: none;
+  font-weight: 600;
+  font-size: 1rem;
+  opacity: 0.8;
+  transition: 0.2s opacity;
+  transition: 0.2s padding;
+  margin: 3vh 4vw;
+}
+.login:hover {
+  opacity: 1;
+  padding-right: 70px;
+  padding-left: 70px;
 }
