@@ -16,12 +16,6 @@ csrf = CSRFProtect(app)
 # limiter = Limiter(get_remote_address, app=app)
 
 
-class Wristband(db.Model):
-    registration_number = db.Column(db.CHAR(9), primary_key=True)
-    is_scanned = db.Column(db.Boolean, default=False)
-    last_scanned = db.Column(db.DateTime, nullable=True)
-
-
 class Culturals(db.Model):
     registration_number = db.Column(db.CHAR(9), primary_key=True)
     is_scanned = db.Column(db.Boolean, default=False)
@@ -41,7 +35,6 @@ class Concert(db.Model):
 
 
 table_map = {
-    # "wristband": Wristband,
     "culturals": Culturals,
     "sadhya": Sadhya,
     "concert": Concert,
