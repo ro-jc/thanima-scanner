@@ -1,6 +1,5 @@
 body {
   font-family: Arial, sans-serif;
-  /* max-width: 90vw; */
   margin: 0 auto;
   padding: 20px;
   background: #000;
@@ -47,6 +46,7 @@ input[type="submit"] {
   color: #2e7d32;
   border: 1px solid #a5d6a7;
   margin: 10px auto;
+  padding: 15px 5vw;
 }
 
 input[type="text"],
@@ -106,6 +106,19 @@ h3 {
   font-weight: 500;
   opacity: 1;
 }
+.header {
+  display: flex;
+  height: 10vh;
+  width: 100%;
+  justify-content: space-between;
+  align-items: center;
+  margin-top: 3vh;
+  margin-bottom: 3vh;
+}
+.thanima_logo {
+  height: 10vh;
+  padding: 1vh 4vw;
+}
 .logout {
   float: right;
   background: rgb(78, 0, 0);
@@ -121,19 +134,6 @@ h3 {
 }
 .logout:hover {
   opacity: 1;
-}
-.header {
-  display: flex;
-  height: 10vh;
-  width: 100%;
-  justify-content: space-between;
-  align-items: center;
-  margin-top: 3vh;
-  margin-bottom: 8vh;
-}
-.thanima_logo {
-  height: 10vh;
-  padding: 1vh 4vw;
 }
 form {
   display: flex;
@@ -165,7 +165,8 @@ form .verifyBtn {
   padding-right: 30px;
   padding-left: 30px;
 }
-#count {
+#in_count,
+#out_count {
   display: flex;
   justify-content: center;
   align-items: center;
@@ -174,11 +175,14 @@ form .verifyBtn {
   font-size: 2.3rem;
   padding: 10px 10px;
   border-radius: 5px;
-  position: absolute;
-  bottom: 5vh;
-  right: 5vh;
   background: #222;
   color: white;
+}
+#in_count {
+  justify-self: flex-start;
+}
+#out_count {
+  justify-self: flex-end;
 }
 
 .thanima_logo2 {
@@ -192,14 +196,14 @@ form .verifyBtn {
 h2 {
   text-align: center;
 }
-.loginForm{
+.loginForm {
   display: flex;
   justify-content: center;
   align-items: center;
   width: 35vw;
   margin: 0 auto;
 }
-.loginForm input{
+.loginForm input {
   border-radius: 50px;
   font-size: 1.2rem;
   text-align: center;
@@ -222,4 +226,44 @@ h2 {
   opacity: 1;
   padding-right: 70px;
   padding-left: 70px;
+}
+#log {
+  display: flex;
+  flex-direction: column;
+  justify-items: center;
+  align-items: center;
+  overflow: scroll;
+  width: 60vw;
+  -ms-overflow-style: none; /* IE and Edge */
+  scrollbar-width: none; /* Firefox */
+}
+#log::-webkit-scrollbar {
+  display: none;
+}
+.exit_record {
+  display: flex;
+  justify-self: center;
+  background-color: #ffebee;
+  color: #c62828;
+  border: 0.5px solid #ef9a9a;
+  margin: 5px auto;
+  padding: 5px 5vw;
+}
+.entry_record {
+  display: flex;
+  justify-self: center;
+  background-color: #e8f5e9;
+  color: #2e7d32;
+  border: 0.5px solid #a5d6a7;
+  margin: 5px auto;
+  padding: 5px 5vw;
+}
+.bottom_container {
+  display: flex;
+  position: absolute;
+  bottom: 5vh;
+  right: 5vw;
+  width: 90vw;
+  height: 25vh;
+  justify-content: space-between;
 }

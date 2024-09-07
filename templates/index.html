@@ -1,62 +1,75 @@
 <!DOCTYPE html>
 <html lang="en">
-
-<head>
-  <meta charset="UTF-8" />
-  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-  <title>Scanner</title>
-  <link rel="stylesheet" type="text/css" href="{{ url_for('static', filename='style.css') }}">
-</head>
-
-<body>
-  <div class="header">
-    <div>
-      <img class="thanima_logo" src="{{ url_for('static', filename='images/thanima.png') }}" alt="">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>Scanner</title>
+    <link rel="stylesheet"
+          type="text/css"
+          href="{{ url_for('static', filename='style.css') }}">
+  </head>
+  <body>
+    <div class="header">
+      <div>
+        <img class="thanima_logo"
+             src="{{ url_for('static', filename='images/thanima.png') }}"
+             alt="">
+      </div>
+      <div>
+        <a href='{{ url_for("logout") }}' class="logout">Logout</a>
+      </div>
     </div>
-    <div><a href='{{ url_for("logout") }}' class="logout">Logout</a>
+    <h3>THANIMA - 2024</h3>
+    <h1>event entry verification</h1>
+    <div class="container">
+      {% for table_name in tables %}
+        <a href="?table={{ table_name }}"
+           class="{{ 'active' if table_name==table else '' }}">{{ table_name }}</a>
+      {% endfor %}
     </div>
-  </div>
-
-  <h3>THANIMA - 2024</h3>
-  <h1>event entry verification</h1>
-
-  <div class="container">
-    {% for table_name,class in tables.items() %}
-    <a href="?table={{ table_name }}" class="{{ class }}">{{ table_name }}</a>
-    {% endfor %}
-  </div>
-  {% if table %}
-  <form method="post" id="verify">
-    <input type="hidden" name="csrf_token" value="{{ csrf_token() }}" />
-    <input type="hidden" name="table" value="{{ table }}" />
-    <input class="regInput" type="text" name="registration_number" placeholder="Enter Registration No." required />
-    <input class="verifyBtn " type="submit" value="Verify" />
-  </form>
-  {% endif %}
-  
-  <div class="flash-container">
-    {% with messages = get_flashed_messages(with_categories=true) %}
-    {% if messages %}
-    {% for category, message in messages %}<div class="flash {{ category }}">{{ message }}</div>{% endfor %}
+    {% if table %}
+      <form method="post" id="verify">
+        <input type="hidden" name="csrf_token" value="{{ csrf_token() }}" />
+        <input type="hidden" name="table" value="{{ table }}" />
+        <input class="regInput"
+               type="text"
+               name="registration_number"
+               placeholder="Enter Registration No."
+               required />
+        <input class="verifyBtn " type="submit" value="Verify" />
+      </form>
     {% endif %}
-    {% endwith %}
-  </div>
-  <div id="count">{{ count }}</div>
-</body>
-<script>
+    <div class="flash-container">
+      {% with messages = get_flashed_messages(with_categories=true) %}
+        {% if messages %}
+          {% for category, message in messages %}<div class="flash {{ category }}">{{ message }}</div>{% endfor %}
+        {% endif %}
+      {% endwith %}
+    </div>
+    <div class="bottom_container">
+      <div id="in_count">In: {{ in_count }}</div>
+      <div id="log">
+        {% for record in log %}
+          <div class="{{ 'entry_record' if record.is_entry else 'exit_record' }}">{{ record.time }}</div>
+        {% endfor %}
+      </div>
+      <div id="out_count">Out: {{ out_count }}</div>
+    </div>
+  </body>
+  <script>
   function updateCount() {
     let form = document.getElementById("verify");
     if (!form) return;
 
     let table = form.children[1].value;
-    let countViewer = document.getElementById('count');
+    let inCountViewer = document.getElementById('in_count');
+    let outCountViewer = document.getElementById('out_count');
 
     fetch("/getCount/" + table)
       .then((response) => response.json())
-      .then((json) => countViewer.innerHTML = json['count'])
+      .then((json) => {inCountViewer.innerHTML = "In: " + json['in_count']; outCountViewer.innerHTML = "Out: " + json['out_count']})
   }
 
   var intervalId = window.setInterval(updateCount, 5000);
-</script>
-
+  </script>
 </html>

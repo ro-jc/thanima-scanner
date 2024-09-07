@@ -19,12 +19,28 @@ def csv_to_sqlite(csv_file, db_file, table_names):
         # Create table
         for table_name in table_names:
             cursor.execute(f"DROP TABLE IF EXISTS {table_name}")
-            cursor.execute(
-                f"CREATE TABLE {table_name} (\n"
-                "registration_number CHAR(9) PRIMARY KEY,\n"
-                "is_scanned BOOLEAN DEFAULT FALSE,\n"
-                "last_scanned DATETIME);"
-            )
+            if table_name != "sadhya":
+                cursor.execute(f"DROP TABLE IF EXISTS {table_name}_log")
+                cursor.execute(
+                    f"CREATE TABLE {table_name} (\n"
+                    "registration_number CHAR(9) NOT NULL PRIMARY KEY,\n"
+                    "is_in BOOLEAN DEFAULT FALSE,\n"
+                    "last_scanned DATETIME);"
+                )
+                cursor.execute(
+                    f"CREATE TABLE {table_name}_log (\n"
+                    "registration_number CHAR(9),\n"
+                    "is_entry BOOLEAN,\n"
+                    "time DATETIME,\n"
+                    "PRIMARY KEY(registration_number, time));"
+                )
+            else:
+                cursor.execute(
+                    f"CREATE TABLE {table_name} (\n"
+                    "registration_number CHAR(9) NOT NULL PRIMARY KEY,\n"
+                    "is_in BOOLEAN DEFAULT FALSE,\n"
+                    "entry_time DATETIME);"
+                )
 
         # Insert data
         for row in csv_reader:
@@ -32,7 +48,7 @@ def csv_to_sqlite(csv_file, db_file, table_names):
             for table_name in table_names:
                 try:
                     cursor.execute(
-                        f"INSERT INTO {table_name} (registration_number) VALUES ('{reg_no}')"
+                        f"INSERT INTO {table_name} (registration_number) VALUES ('{reg_no.upper()}')"
                     )
                 except sqlite3.IntegrityError as e:
                     print(f"Got {e} due to {reg_no}, continuing")
@@ -49,6 +65,6 @@ if __name__ == "__main__":
     db_file = "registrations.db"
 
     csv_file = "registered.csv"
-    table_names = ["wristband", "culturals", "concert", "sadhya"]
+    table_names = ["entry", "concert", "sadhya"]
 
     csv_to_sqlite(csv_file, db_file, table_names)
