@@ -41,7 +41,7 @@ class Concert(db.Model):
 
 
 table_map = {
-    "wristband": Wristband,
+    # "wristband": Wristband,
     "culturals": Culturals,
     "sadhya": Sadhya,
     "concert": Concert,
@@ -80,7 +80,7 @@ def index():
         return redirect(url_for("login"))
 
     if request.method == "POST":
-        # print(request.form)
+
         reg_number = request.form["registration_number"]
         table = table_map[request.form["table"]]
         student = table.query.filter_by(registration_number=reg_number).first()
