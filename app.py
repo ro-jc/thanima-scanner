@@ -125,30 +125,22 @@ def index():
                     flash("Successfully scanned.", "success")
             else:
                 student.is_in = not student.is_in
-                record = EntryLog(
-                    registration_number=reg_number,
-                    time=datetime.now(),
+                record = log_map[table](
+                    registration_number=reg_number, time=datetime.now()
                 )
 
                 if not student.is_in:
                     record.is_entry = False
-                    flash(
-                        f'Leaving. Entered at {student.last_scanned.strftime("%H:%M:%S")}',
-                        "error",
-                    )
+                    # flash(f"Left", "error")
                 else:
                     record.is_entry = True
-                    flash(
-                        f'Entering. Last left at {student.last_scanned.strftime("%H:%M:%S")}',
-                        "success",
-                    )
+                    # flash("Entered", "error")
 
                 student.last_scanned = datetime.now()
                 db.session.add(record)
                 db.session.commit()
 
                 log = get_log(reg_number, table)
-                log.pop()
 
     count_response = get_in_count(table=table)
 
@@ -183,7 +175,7 @@ def login():
             ADMIN_PASSWORD_HASH, password
         ):
             session["logged_in"] = True
-            flash("You were successfully logged in", "success")
+            flash("Logged in", "success")
             return redirect(url_for("index"))
         else:
             flash("Invalid login credentials", "error")
