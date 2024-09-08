@@ -78,7 +78,7 @@ def get_count(table):
         return {"count": "", "error": "invalid table"}
 
     table_obj = table_map[table]
-    in_count = db.session.query(table_obj).filter(table_obj.is_in == True).count() + 586
+    in_count = db.session.query(table_obj).filter(table_obj.is_in == True).count()
     if table == "sadhya" and in_count and in_count % 300 == 0:
         flash(
             "The 300th person has entered. In-count display has been reset to zero.",
