@@ -67,7 +67,7 @@ TOTAL_COUNT = db.session.query(Entry).count()
 
 
 @app.route("/getCount/<string:table>")
-def get_in_count(table):
+def get_count(table):
     if "logged_in" not in session:
         return {"count": "", "error": "not logged in"}
 
@@ -78,7 +78,12 @@ def get_in_count(table):
         return {"count": "", "error": "invalid table"}
 
     table_obj = table_map[table]
-    in_count = db.session.query(table_obj).filter(table_obj.is_in == True).count()
+    in_count = db.session.query(table_obj).filter(table_obj.is_in == True).count() + 586
+    if table == "sadhya" and in_count and in_count % 300 == 0:
+        flash(
+            "The 300th person has entered. In-count display has been reset to zero.",
+            "error",
+        )
     return {
         "in_count": in_count,
         "out_count": TOTAL_COUNT - in_count,
@@ -105,7 +110,7 @@ def index():
     table = request.args.get("table", None)
 
     if request.method == "POST":
-        reg_number = request.form["registration_number"].upper()
+        reg_number = request.form["registration_number"].strip().upper()
         table_obj = table_map[table]
         student = table_obj.query.filter_by(registration_number=reg_number).first()
 
@@ -142,7 +147,7 @@ def index():
 
                 log = get_log(reg_number, table)
 
-    count_response = get_in_count(table=table)
+    count_response = get_count(table=table)
 
     if count_response["error"]:
         print("count error:", count_response["error"])
