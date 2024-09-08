@@ -197,7 +197,7 @@ def add():
     response = ""
     reg_no = ""
     if request.method == "POST":
-        reg_no = request.form["registration_number"]
+        reg_no = request.form["registration_number"].upper()
         entry_record = Entry(registration_number=reg_no)
         concert_record = Concert(registration_number=reg_no)
         try:
