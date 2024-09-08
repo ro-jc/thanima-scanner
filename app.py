@@ -66,6 +66,25 @@ ADMIN_PASSWORD_HASH = "pbkdf2:sha256:260000$qEVfYZHe7Kn5hOib$7eefd86c39af2e23f9c
 TOTAL_COUNT = db.session.query(Entry).count()
 
 
+@app.route("/reset/<string:table>")
+def reset(table):
+    if "logged_in" not in session:
+        return {"error": "not logged in"}
+
+    if not table:
+        return {"error": "no table provided"}
+
+    if table not in table_map:
+        return {"error": "invalid table"}
+
+    table_obj = table_map[table]
+    for i in db.session.query(table_obj):
+        i.is_in = False
+    db.session.commit()
+
+    return {"error": ""}
+
+
 @app.route("/getCount/<string:table>")
 def get_count(table):
     if "logged_in" not in session:
