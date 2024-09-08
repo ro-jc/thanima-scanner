@@ -61,7 +61,7 @@ with app.app_context():
 
 # admin credentials
 ADMIN_USERNAME = "admin"
-ADMIN_PASSWORD_HASH = "pbkdf2:sha256:260000$WQNyaZ4k8tNHu6uf$4e471f012f9fbbede80d263c9deba4cfa264808455635f6240a05f5c8da2d234"
+ADMIN_PASSWORD_HASH = "pbkdf2:sha256:260000$qEVfYZHe7Kn5hOib$7eefd86c39af2e23f9cc0d2ed53bff5633e0d13a0611ef01f8f6598ead513972"
 
 TOTAL_COUNT = db.session.query(Entry).count()
 
