@@ -34,8 +34,9 @@
         <input class="regInput"
                type="text"
                name="registration_number"
-               placeholder="Enter Registration No."
-               required />
+               placeholder="Registration No."
+               required
+               autofocus />
         <input class="verifyBtn " type="submit" value="Verify" />
       </form>
     {% endif %}
@@ -57,26 +58,26 @@
     </div>
   </body>
   <script>
-  function updateCount() {
-    let form = document.getElementById("verify");
-    if (!form) return;
+    function updateCount() {
+      let form = document.getElementById("verify");
+      if (!form) return;
 
-    let table = form.children[1].value;
-    let inCountViewer = document.getElementById('in_count');
-    let outCountViewer = document.getElementById('out_count');
+      let table = form.children[1].value;
+      let inCountViewer = document.getElementById('in_count');
+      let outCountViewer = document.getElementById('out_count');
 
-    fetch("/getCount/" + table)
-      .then((response) => response.json())
-      .then((json) => {
-        let in_count = json['in_count'];
-        // if (in_count != 0 && in_count%300 == 0) {
-        //   alert("The 300th person has entered. In-count display has been reset to zero.");
-        // }
-        inCountViewer.innerHTML = "In: " + (json['in_count']);
-        outCountViewer.innerHTML = "Out: " + json['out_count'];
-      })
-  }
+      fetch("/getCount/" + table)
+        .then((response) => response.json())
+        .then((json) => {
+          let in_count = json['in_count'];
+          // if (in_count != 0 && in_count%300 == 0) {
+          //   alert("The 300th person has entered. In-count display has been reset to zero.");
+          // }
+          inCountViewer.innerHTML = "In: " + (json['in_count']);
+          outCountViewer.innerHTML = "Out: " + json['out_count'];
+        })
+    }
 
-  var intervalId = window.setInterval(updateCount, 5000);
+    var intervalId = window.setInterval(updateCount, 5000);
   </script>
 </html>
