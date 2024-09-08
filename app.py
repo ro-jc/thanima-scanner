@@ -127,6 +127,7 @@ def index():
 
     log = []
     table = request.args.get("table", None)
+    reg_number = ""
 
     if request.method == "POST":
         reg_number = request.form["registration_number"].strip().upper()
@@ -186,6 +187,7 @@ def index():
         in_count=in_count,
         out_count=out_count,
         log=log[::-1],
+        reg_no=reg_number,
     )
 
 
