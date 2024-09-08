@@ -1,6 +1,7 @@
 from flask import Flask, render_template, request, redirect, url_for, flash, session
 from flask_sqlalchemy import SQLAlchemy
 from werkzeug.security import check_password_hash
+import sqlalchemy
 
 # from flask_limiter import Limiter
 # from flask_limiter.util import get_remote_address
@@ -189,6 +190,26 @@ def index():
         log=log[::-1],
         reg_no=reg_number,
     )
+
+
+@app.route("/add", methods=["GET", "POST"])
+def add():
+    response = ""
+    reg_no = ""
+    if request.method == "POST":
+        reg_no = request.form["registration_number"]
+        entry_record = Entry(registration_number=reg_no)
+        concert_record = Concert(registration_number=reg_no)
+        try:
+            db.session.add(entry_record)
+            db.session.add(concert_record)
+            db.session.commit()
+            response = "Successfully added to database"
+        except sqlalchemy.exc.IntegrityError as e:
+            response = "Already in the database"
+            print(e)
+
+    return render_template("add.html", response=response, reg_no=reg_no)
 
 
 @app.route("/login", methods=["GET", "POST"])
