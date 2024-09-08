@@ -48,7 +48,8 @@
       {% endwith %}
     </div>
     <div class="bottom_container">
-      <div id="in_count">In: {{ in_count%300 if table=='sadhya' else in_count }}</div>
+      <!-- <div id="in_count">In: {{ in_count%300 if table=='sadhya' else in_count }}</div> -->
+      <div id="in_count">In: {{ in_count }}</div>
       <div id="log">
         {% for record in log %}
           <div class="{{ 'entry_record' if record.is_entry else 'exit_record' }}">{{ record.time }}</div>
@@ -69,11 +70,11 @@
       fetch("/getCount/" + table)
         .then((response) => response.json())
         .then((json) => {
-          let in_count = json['in_count'];
+          // let in_count = json['in_count'];
           // if (in_count != 0 && in_count%300 == 0) {
           //   alert("The 300th person has entered. In-count display has been reset to zero.");
           // }
-          inCountViewer.innerHTML = "In: " + (json['in_count']);
+          inCountViewer.innerHTML = "In: " + json['in_count'];
           outCountViewer.innerHTML = "Out: " + json['out_count'];
         })
     }
