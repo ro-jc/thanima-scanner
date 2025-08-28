@@ -3,11 +3,13 @@ import sqlite3
 
 
 def csv_to_sqlite(csv_file, db_file, table_names):
-    target_header = "Registration No."
+    table_names = ["entry", "concert", "sadhya", "sticker"]
 
     # Connect to SQLite database
     conn = sqlite3.connect(db_file)
     cursor = conn.cursor()
+
+    target_header = "Registration No."
 
     # Read the CSV file
     with open(csv_file, "r") as file:
@@ -16,10 +18,12 @@ def csv_to_sqlite(csv_file, db_file, table_names):
 
         header_index = headers.index(target_header)
 
-        # Create table
+        # Create tables
+
         for table_name in table_names:
             cursor.execute(f"DROP TABLE IF EXISTS {table_name}")
-            if table_name != "sadhya":
+
+            if table_name in ["entry", "concert"]:
                 cursor.execute(f"DROP TABLE IF EXISTS {table_name}_log")
                 cursor.execute(
                     f"CREATE TABLE {table_name} (\n"
@@ -34,12 +38,19 @@ def csv_to_sqlite(csv_file, db_file, table_names):
                     "time DATETIME,\n"
                     "PRIMARY KEY(registration_number, time));"
                 )
-            else:
+            elif table_name == "sadhya":
                 cursor.execute(
                     f"CREATE TABLE {table_name} (\n"
                     "registration_number CHAR(9) NOT NULL PRIMARY KEY,\n"
                     "is_in BOOLEAN DEFAULT FALSE,\n"
                     "entry_time DATETIME);"
+                )
+            elif table_name == "sticker":
+                cursor.execute(
+                    f"CREATE TABLE {table_name} (\n"
+                    "registration_number CHAR(9) NOT NULL PRIMARY KEY,\n"
+                    "is_given BOOLEAN DEFAULT FALSE,\n"
+                    "given_time DATETIME);"
                 )
 
         # Insert data
@@ -65,6 +76,5 @@ if __name__ == "__main__":
     db_file = "registrations.db"
 
     csv_file = "registered.csv"
-    table_names = ["entry", "concert", "sadhya"]
 
-    csv_to_sqlite(csv_file, db_file, table_names)
+    csv_to_sqlite(csv_file, db_file)
