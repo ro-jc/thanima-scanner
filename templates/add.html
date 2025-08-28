@@ -9,6 +9,17 @@
           href="{{ url_for('static', filename='style.css') }}">
   </head>
   <body>
+    <div class="header">
+      <div>
+        <img class="thanima_logo"
+             src="{{ url_for('static', filename='images/thanima.png') }}"
+             alt="">
+      </div>
+      <div>
+        <a href='{{ url_for("logout") }}' class="logout">Logout</a>
+      </div>
+    </div>
+    <h3>THANIMA - 2025</h3>
     <h1>Add Participant</h1>
     <form method="post" id="verify" action="/add">
       <input type="hidden" name="csrf_token" value="{{ csrf_token() }}" />
@@ -21,10 +32,10 @@
       <input class="verifyBtn " type="submit" value="Verify" />
     </form>
     {% if reg_no %}
-    <div style="display: grid;
-                justify-content: center;
-                font-weight: 800;
-                font-size: large">{{ reg_no }}: {{ response }}</div>
+      <div style="display: grid;
+                  justify-content: center;
+                  font-weight: 800;
+                  font-size: large">{{ reg_no }}: {{ response }}</div>
     {% endif %}
   </body>
 </html>
