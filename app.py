@@ -2,12 +2,15 @@ from flask import Flask, render_template, request, redirect, url_for, flash, ses
 from flask_sqlalchemy import SQLAlchemy
 from werkzeug.security import check_password_hash
 import sqlalchemy
+from sqlalchemy.ext.serializer import dumps
 
 # from flask_limiter import Limiter
 # from flask_limiter.util import get_remote_address
 from datetime import datetime
 from flask_wtf.csrf import CSRFProtect
 
+
+BACKUP_PATH = open("backup_path").read().strip()
 
 app = Flask(__name__)
 app.config["SECRET_KEY"] = open("secret").read().strip()
@@ -31,9 +34,21 @@ class Entry(db.Model):
 
 class EntryLog(db.Model):
     __tablename__ = "entry_log"
-    registration_number = db.Column(db.CHAR(9))
+    registration_number = db.Column(
+        db.CHAR(9),
+        db.ForeignKey("entry.registration_number"),
+        nullable=False,
+        # primary_key=True,
+    )
     is_entry = db.Column(db.Boolean, default=False)
     time = db.Column(db.DateTime, nullable=True, primary_key=True)
+
+    # __table_args__ = (
+    #     db.PrimaryKeyConstraint(
+    #         registration_number,
+    #         time,
+    #     ),
+    #
 
 
 class Concert(db.Model):
@@ -44,9 +59,21 @@ class Concert(db.Model):
 
 class ConcertLog(db.Model):
     __tablename__ = "concert_log"
-    registration_number = db.Column(db.CHAR(9), primary_key=True)
+    registration_number = db.Column(
+        db.CHAR(9),
+        db.ForeignKey("concert.registration_number"),
+        nullable=False,
+        # primary_key=True,
+    )
     is_entry = db.Column(db.Boolean, default=False)
     time = db.Column(db.DateTime, nullable=True, primary_key=True)
+
+    # __table_args__ = (
+    #     db.PrimaryKeyConstraint(
+    #         registration_number,
+    #         time,
+    #     ),
+    # )
 
 
 table_map = {
@@ -62,28 +89,39 @@ with app.app_context():
 
 # admin credentials
 ADMIN_USERNAME = "admin"
-ADMIN_PASSWORD_HASH = "pbkdf2:sha256:260000$qEVfYZHe7Kn5hOib$7eefd86c39af2e23f9cc0d2ed53bff5633e0d13a0611ef01f8f6598ead513972"
+ADMIN_PASSWORD_HASH = "pbkdf2:sha256:260000$pyJqKiGxx513y4b6$1e40141f424908076a239af573d039e0182d28cd6d6acec2dcee4d26e1b6470b"
+
+# volunteer credentials
+VOLUNTEER_USERNAME = "volunteer"
+VOLUNTEER_PASSWORD_HASH = "pbkdf2:sha256:260000$3ilfqNWJEXCD33Zy$c8b1c01b201250c21f2a8b2c827b6ac7d205206e8b54aeff3a9bdfd61d52380e"
 
 TOTAL_COUNT = db.session.query(Entry).count()
 
 
 @app.route("/reset/<string:table>")
 def reset(table):
-    if "logged_in" not in session:
-        return {"error": "not logged in"}
+    if "admin" not in session:
+        return {"error": "not an admin"}, 401
 
     if not table:
-        return {"error": "no table provided"}
+        return {"error": "no table provided"}, 400
 
     if table not in table_map:
-        return {"error": "invalid table"}
+        return {"error": "invalid table"}, 404
 
     table_obj = table_map[table]
+
+    q = db.session.query(table_obj)
+    serialized_data = dumps(q.all())
+    backup_file = open(BACKUP_PATH + f"{table}.table", "wb")
+    backup_file.write(serialized_data)
+    backup_file.close()
+
     for i in db.session.query(table_obj):
         i.is_in = False
     db.session.commit()
 
-    return {"error": ""}
+    return {"error": ""}, 200
 
 
 @app.route("/getCount/<string:table>")
@@ -194,6 +232,9 @@ def index():
 
 @app.route("/add", methods=["GET", "POST"])
 def add():
+    if "admin" not in session:
+        return redirect(url_for("index"))
+
     response = ""
     reg_no = ""
     if request.method == "POST":
@@ -218,12 +259,19 @@ def login():
     if request.method == "POST":
         username = request.form["username"]
         password = request.form["password"]
-        if username == ADMIN_USERNAME and check_password_hash(
+        if username == VOLUNTEER_USERNAME and check_password_hash(
+            VOLUNTEER_PASSWORD_HASH, password
+        ):
+            session["logged_in"] = True
+            flash("Logged in as volunteer", "success")
+            return redirect(url_for("index"))
+        elif username == ADMIN_USERNAME and check_password_hash(
             ADMIN_PASSWORD_HASH, password
         ):
             session["logged_in"] = True
-            flash("Logged in", "success")
-            return redirect(url_for("index"))
+            session["admin"] = True
+            flash("Logged in as admin", "success")
+            return redirect(url_for("add"))
         else:
             flash("Invalid login credentials", "error")
     return render_template("login.html")
@@ -232,6 +280,7 @@ def login():
 @app.route("/logout")
 def logout():
     session.pop("logged_in", None)
+    session.pop("admin", None)
     return redirect(url_for("login"))
 
 

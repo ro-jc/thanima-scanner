@@ -1,0 +1,5 @@
+backup_path
+secret
+db_url
+*.db
+*.table
