@@ -58,7 +58,6 @@
           <input type="checkbox" id="concert" name="concert" value="concert" checked />
           <label for="concert">Concert</label>
         </div>
-        
       </div>
       <input class="verifyBtn " type="submit" value="Add" />
     </form>
@@ -66,7 +65,13 @@
       <div style="display: grid;
                   justify-content: center;
                   font-weight: 800;
-                  font-size: large">{{ reg_no }}: {{ response }}</div>
+                  font-size: large">{{ reg_no }}</div>
+      {% for response in responses %}
+        <div style="display: grid;
+                    justify-content: center;
+                    font-weight: 800;
+                    font-size: large">{{ response }}</div>
+      {% endfor %}
     {% endif %}
   </body>
 </html>

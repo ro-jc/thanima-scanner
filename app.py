@@ -83,9 +83,9 @@ class ConcertLog(db.Model):
 
 
 table_map = {
-    "sadhya": Sadhya,
     "sticker": Sticker,
     "entry": Entry,
+    "sadhya": Sadhya,
     "concert": Concert,
 }
 log_map = {"entry": EntryLog, "concert": ConcertLog}
@@ -94,7 +94,12 @@ log_map = {"entry": EntryLog, "concert": ConcertLog}
 # Create the database and table
 with app.app_context():
     db.create_all()
-    TOTAL_COUNT = db.session.query(Entry).count()
+    TOTAL_COUNTS = {
+        "sticker": db.session.query(Sticker).count(),
+        "entry": db.session.query(Entry).count(),
+        "sadhya": db.session.query(Sadhya).count(),
+        "concert": db.session.query(Concert).count(),
+    }
 
 
 # admin credentials
@@ -152,7 +157,7 @@ def get_count(table):
     #     )
     return {
         "in_count": in_count,
-        "out_count": TOTAL_COUNT - in_count,
+        "out_count": TOTAL_COUNTS[table] - in_count,
         "error": "",
     }
 
@@ -285,60 +290,24 @@ def add():
     if "admin" not in session:
         return redirect(url_for("index"))
 
-    response = ""
+    response1, response2 = [], []
     reg_no = ""
     if request.method == "POST":
         reg_no = request.form["registration_number"].upper()
 
-        sticker_record = Sticker(registration_number=reg_no)
-        entry_record = Entry(registration_number=reg_no)
-        sadhya_record = Sadhya(registration_number=reg_no)
-        concert_record = Concert(registration_number=reg_no)
-
-        # response = "Already in database"
-
-        # try:
-        #     if "sticker" in request.form:
-        #         db.session.add(sticker_record)
-        #     response = "Successfully added to database"
-        # except sqlalchemy.exc.IntegrityError as e:
-        #     print("already in sticker")
-
-        # try:
-        #     if "entry" in request.form:
-        #         db.session.add(entry_record)
-        #     response = "Successfully added to database"
-        # except sqlalchemy.exc.IntegrityError as e:
-        #     print("already in entry")
-
-        # try:
-        #     if "sadhya" in request.form:
-        #         db.session.add(sadhya_record)
-        #     response = "Successfully added to database"
-        # except sqlalchemy.exc.IntegrityError as e:
-        #     print(e)
-
-        # try:
-        #     if "concert" in request.form:
-        #         db.session.add(concert_record)
-        #     response = "Successfully added to database"
-        # except sqlalchemy.exc.IntegrityError as e:
-        #     print(e)
-
-        try:
-            db.session.add(sticker_record)
-            db.session.add(entry_record)
-            db.session.add(sadhya_record)
-            db.session.add(concert_record)
-            db.session.commit()
-            response = "Successfully added to database"
-        except sqlalchemy.exc.IntegrityError as e:
-            response = "Already in the database"
-            print(e)
+        for key in request.form.keys():
+            if table_obj := table_map.get(key, None):
+                record = table_obj.query.filter_by(registration_number=reg_no).first()
+                if record is None:
+                    new_record = table_obj(registration_number=reg_no)
+                    db.session.add(new_record)
+                    response1 += [f"Successfully added to '{key}'"]
+                else:
+                    response2 += [f"Already in '{key}'"]
 
         db.session.commit()
 
-    return render_template("add.html", response=response, reg_no=reg_no)
+    return render_template("add.html", responses=response1 + response2, reg_no=reg_no)
 
 
 @app.route("/login", methods=["GET", "POST"])

@@ -313,10 +313,6 @@ h2 {
   height: 25vh;
   justify-content: space-between;
 }
-.check_group {
-  display: flex;
-  flex-direction: row;
-}
 .chec_group{
   display: flex;
   flex-direction: column;
