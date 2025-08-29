@@ -108,16 +108,41 @@ h3 {
 }
 .header {
   display: flex;
-  height: 10vh;
+  height: 5vh;
   width: 100%;
   justify-content: space-between;
   align-items: center;
   margin-top: 3vh;
   margin-bottom: 3vh;
 }
+.logo_div {
+  display: flex;
+  flex-direction: row;
+  /* justify-content: center; */
+  align-items: center;
+}
+.admin {
+  font-size: x-large;
+}
 .thanima_logo {
   height: 10vh;
   padding: 1vh 4vw;
+}
+.section_button {
+  float: right;
+  background: rgb(78, 0, 0);
+  padding: 15px 25px;
+  border-radius: 50px;
+  color: white;
+  text-decoration: none;
+  font-weight: 600;
+  font-size: 1rem;
+  opacity: 0.8;
+  transition: 0.2s opacity;
+  margin: 0 4vw;
+}
+.section_button:hover {
+  opacity: 1;
 }
 .logout {
   float: right;
@@ -266,4 +291,8 @@ h2 {
   width: 90vw;
   height: 25vh;
   justify-content: space-between;
+}
+.check_group {
+  display: flex;
+  flex-direction: row;
 }

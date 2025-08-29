@@ -39,19 +39,12 @@ def csv_to_sqlite(csv_file, db_file):
                     "time DATETIME,\n"
                     "PRIMARY KEY(registration_number, time));"
                 )
-            elif table_name == "sadhya":
+            elif table_name in ["sadhya", "sticker"]:
                 cursor.execute(
                     f"CREATE TABLE {table_name} (\n"
                     "registration_number CHAR(9) NOT NULL PRIMARY KEY,\n"
                     "is_in BOOLEAN DEFAULT FALSE,\n"
                     "entry_time DATETIME);"
-                )
-            elif table_name == "sticker":
-                cursor.execute(
-                    f"CREATE TABLE {table_name} (\n"
-                    "registration_number CHAR(9) NOT NULL PRIMARY KEY,\n"
-                    "is_given BOOLEAN DEFAULT FALSE,\n"
-                    "given_time DATETIME);"
                 )
 
         # Insert data
