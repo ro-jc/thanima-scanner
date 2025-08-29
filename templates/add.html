@@ -61,17 +61,17 @@
       </div>
       <input class="verifyBtn " type="submit" value="Add" />
     </form>
+    <div class="flash-container">
+      {% with messages = get_flashed_messages(with_categories=true) %}
+        {% if messages %}
+          {% for category, message in messages %}<div class="flash {{ category }}">{{ message }}</div>{% endfor %}
+        {% endif %}
+      {% endwith %}
+    </div>
     {% if reg_no %}
-      <div style="display: grid;
-                  justify-content: center;
-                  font-weight: 800;
-                  font-size: large">{{ reg_no }}</div>
-      {% for response in responses %}
-        <div style="display: grid;
-                    justify-content: center;
-                    font-weight: 800;
-                    font-size: large">{{ response }}</div>
-      {% endfor %}
+      <div class="reg_no">{{ reg_no }}</div>
+      {% for response in success_responses %}<div class="success_response">{{ response }}</div>{% endfor %}
+      {% for response in failure_responses %}<div class="failure_response">{{ response }}</div>{% endfor %}
     {% endif %}
   </body>
 </html>

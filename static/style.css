@@ -330,3 +330,15 @@ input[type="checkbox"] {
   width: 20px; /* Adjust as needed */
   height: 20px; /* Adjust as needed */
 }
+.reg_no {
+  display: grid;
+  justify-content: center;
+  font-weight: 800;
+  font-size: large
+}
+.success_response {
+
+}
+.failure_response {
+  
+}

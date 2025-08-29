@@ -290,7 +290,7 @@ def add():
     if "admin" not in session:
         return redirect(url_for("index"))
 
-    response1, response2 = [], []
+    success_responses, failure_responses = [], []
     reg_no = ""
     if request.method == "POST":
         reg_no = request.form["registration_number"].upper()
@@ -301,13 +301,18 @@ def add():
                 if record is None:
                     new_record = table_obj(registration_number=reg_no)
                     db.session.add(new_record)
-                    response1 += [f"Successfully added to '{key}'"]
+                    success_responses += [f"Successfully added to '{key}'"]
                 else:
-                    response2 += [f"Already in '{key}'"]
+                    failure_responses += [f"Already in '{key}'"]
 
         db.session.commit()
 
-    return render_template("add.html", responses=response1 + response2, reg_no=reg_no)
+    return render_template(
+        "add.html",
+        reg_no=reg_no,
+        success_responses=success_responses,
+        failure_responses=failure_responses,
+    )
 
 
 @app.route("/login", methods=["GET", "POST"])
