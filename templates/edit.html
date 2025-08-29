@@ -3,7 +3,7 @@
   <head>
     <meta charset="UTF-8" />
     <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-    <title>Add</title>
+    <title>Edit</title>
     <link rel="stylesheet"
           type="text/css"
           href="{{ url_for('static', filename='style.css') }}">
@@ -24,7 +24,7 @@
       </div>
       {% if session["admin"] %}
         <div>
-          <a href='{{ url_for("add") }}' class="section_button">Add</a>
+          <a href='{{ url_for("edit") }}' class="section_button">Edit</a>
         </div>
       {% endif %}
       <div>
@@ -32,9 +32,15 @@
       </div>
     </div>
     <h3>THANIMA - 2025</h3>
-    <h1>Add Participant</h1>
-    <form method="post" id="verify" action="/add">
-      <input type="hidden" name="csrf_token" value="{{ csrf_token() }}" />
+    <h1>Add / Remove Participant</h1>
+    <form method="post" id="verify" action="/edit">
+      <div class="check_group">
+        <input type="hidden" name="csrf_token" value="{{ csrf_token() }}" />
+        <input type="radio" id="add" name="action" value="add" checked>
+        <label for="add">Add</label>
+        <input type="radio" id="remove" name="action" value="remove">
+        <label for="remove">Remove</label>
+      </div>
       <input class="regInput"
              type="text"
              name="registration_number"
@@ -59,8 +65,18 @@
           <label for="concert">Concert</label>
         </div>
       </div>
-      <input class="verifyBtn " type="submit" value="Add" />
+      <input class="verifyBtn" id="submitBtn" type="submit" value="Add" />
     </form>
+    <script>
+      const radios = document.querySelectorAll('input[name="action"]');
+      const submitBtn = document.getElementById('submitBtn');
+
+      radios.forEach(radio => {
+        radio.addEventListener('change', () => {
+          submitBtn.value = radio.value.charAt(0).toUpperCase() + radio.value.slice(1);
+        });
+      });
+    </script>
     <div class="flash-container">
       {% with messages = get_flashed_messages(with_categories=true) %}
         {% if messages %}

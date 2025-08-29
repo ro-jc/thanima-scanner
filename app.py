@@ -42,7 +42,7 @@ class EntryLog(db.Model):
     __tablename__ = "entry_log"
     registration_number = db.Column(
         db.CHAR(9),
-        db.ForeignKey("entry.registration_number"),
+        # db.ForeignKey("entry.registration_number"),
         nullable=False,
         # primary_key=True,
     )
@@ -67,7 +67,7 @@ class ConcertLog(db.Model):
     __tablename__ = "concert_log"
     registration_number = db.Column(
         db.CHAR(9),
-        db.ForeignKey("concert.registration_number"),
+        # db.ForeignKey("concert.registration_number"),
         nullable=False,
         # primary_key=True,
     )
@@ -91,15 +91,18 @@ table_map = {
 log_map = {"entry": EntryLog, "concert": ConcertLog}
 
 
+get_total_counts = lambda: {
+    "sticker": db.session.query(Sticker).count(),
+    "entry": db.session.query(Entry).count(),
+    "sadhya": db.session.query(Sadhya).count(),
+    "concert": db.session.query(Concert).count(),
+}
+
+
 # Create the database and table
 with app.app_context():
     db.create_all()
-    TOTAL_COUNTS = {
-        "sticker": db.session.query(Sticker).count(),
-        "entry": db.session.query(Entry).count(),
-        "sadhya": db.session.query(Sadhya).count(),
-        "concert": db.session.query(Concert).count(),
-    }
+    TOTAL_COUNTS = get_total_counts()
 
 
 # admin credentials
@@ -285,8 +288,8 @@ def verify():
     )
 
 
-@app.route("/add", methods=["GET", "POST"])
-def add():
+@app.route("/edit", methods=["GET", "POST"])
+def edit():
     if "admin" not in session:
         return redirect(url_for("index"))
 
@@ -297,18 +300,33 @@ def add():
 
         for key in request.form.keys():
             if table_obj := table_map.get(key, None):
-                record = table_obj.query.filter_by(registration_number=reg_no).first()
-                if record is None:
-                    new_record = table_obj(registration_number=reg_no)
-                    db.session.add(new_record)
-                    success_responses += [f"Successfully added to '{key}'"]
+                if request.form["action"] == "remove":
+                    record = table_obj.query.filter_by(registration_number=reg_no)
+                    if record.count() > 0:
+                        record.delete()
+                        success_responses += [
+                            f"Successfully removed from '{key.capitalize()}'"
+                        ]
+                    else:
+                        failure_responses += [f"Was not in '{key.capitalize()}'"]
                 else:
-                    failure_responses += [f"Already in '{key}'"]
+                    record = table_obj.query.filter_by(registration_number=reg_no)
+                    if record.count() == 0:
+                        new_record = table_obj(registration_number=reg_no)
+                        db.session.add(new_record)
+                        success_responses += [
+                            f"Successfully added to '{key.capitalize()}'"
+                        ]
+                    else:
+                        failure_responses += [f"Already in '{key.capitalize()}'"]
 
         db.session.commit()
 
+    global TOTAL_COUNTS
+    TOTAL_COUNTS = get_total_counts()
+
     return render_template(
-        "add.html",
+        "edit.html",
         reg_no=reg_no,
         success_responses=success_responses,
         failure_responses=failure_responses,
@@ -333,7 +351,7 @@ def login():
             session["logged_in"] = True
             session["admin"] = True
             flash("Logged in as admin", "success")
-            return redirect(url_for("add"))
+            return redirect(url_for("edit"))
         else:
             flash("Invalid login credentials", "error")
     return render_template("login.html")

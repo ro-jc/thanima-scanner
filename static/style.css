@@ -313,6 +313,19 @@ h2 {
   height: 25vh;
   justify-content: space-between;
 }
+.check_group{
+  display: flex;
+  flex-direction: row;
+}
+.check_group input{
+  font-size: 3rem;
+}
+.check_group label{
+  font-size: 1.6rem;
+  padding: 0 5px;
+  margin: 0 5px;
+  
+}
 .chec_group{
   display: flex;
   flex-direction: column;
@@ -330,6 +343,10 @@ input[type="checkbox"] {
   width: 20px; /* Adjust as needed */
   height: 20px; /* Adjust as needed */
 }
+input[type="radio"] {
+  width: 20px; /* Adjust as needed */
+  height: 20px; /* Adjust as needed */
+}
 .reg_no {
   display: grid;
   justify-content: center;
@@ -337,8 +354,14 @@ input[type="checkbox"] {
   font-size: large
 }
 .success_response {
-
+  display: grid;
+  justify-content: center;
+  font-weight: 800;
+  font-size: large
 }
 .failure_response {
-  
+  display: grid;
+  justify-content: center;
+  font-weight: 800;
+  font-size: large
 }
