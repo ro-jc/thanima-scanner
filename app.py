@@ -135,6 +135,11 @@ def reset(table):
 
     for i in db.session.query(table_obj):
         i.is_in = False
+
+    if table in log_map:
+        log_obj = log_map[table]
+        db.session.query(log_obj).delete()
+
     db.session.commit()
 
     return {"error": ""}, 200
