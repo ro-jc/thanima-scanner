@@ -83,9 +83,12 @@ table_map = {
 }
 log_map = {"entry": EntryLog, "concert": ConcertLog}
 
+
 # Create the database and table
 with app.app_context():
     db.create_all()
+    TOTAL_COUNT = db.session.query(Entry).count()
+
 
 # admin credentials
 ADMIN_USERNAME = "admin"
@@ -95,7 +98,6 @@ ADMIN_PASSWORD_HASH = "pbkdf2:sha256:260000$pyJqKiGxx513y4b6$1e40141f424908076a2
 VOLUNTEER_USERNAME = "volunteer"
 VOLUNTEER_PASSWORD_HASH = "pbkdf2:sha256:260000$3ilfqNWJEXCD33Zy$c8b1c01b201250c21f2a8b2c827b6ac7d205206e8b54aeff3a9bdfd61d52380e"
 
-TOTAL_COUNT = db.session.query(Entry).count()
 
 
 @app.route("/reset/<string:table>")
