@@ -26,6 +26,12 @@ class Sadhya(db.Model):
     entry_time = db.Column(db.DateTime, nullable=True)
 
 
+class Sticker(db.Model):
+    registration_number = db.Column(db.CHAR(9), primary_key=True)
+    is_in = db.Column(db.Boolean, default=False)
+    entry_time = db.Column(db.DateTime, nullable=True)
+
+
 class Entry(db.Model):
     registration_number = db.Column(db.CHAR(9), primary_key=True)
     is_in = db.Column(db.Boolean, default=False)
@@ -78,6 +84,7 @@ class ConcertLog(db.Model):
 
 table_map = {
     "sadhya": Sadhya,
+    "sticker": Sticker,
     "entry": Entry,
     "concert": Concert,
 }
@@ -97,7 +104,6 @@ ADMIN_PASSWORD_HASH = "pbkdf2:sha256:260000$pyJqKiGxx513y4b6$1e40141f424908076a2
 # volunteer credentials
 VOLUNTEER_USERNAME = "volunteer"
 VOLUNTEER_PASSWORD_HASH = "pbkdf2:sha256:260000$3ilfqNWJEXCD33Zy$c8b1c01b201250c21f2a8b2c827b6ac7d205206e8b54aeff3a9bdfd61d52380e"
-
 
 
 @app.route("/reset/<string:table>")
@@ -178,7 +184,7 @@ def index():
         if not student:
             flash("Not registered", "error")
         else:
-            if table == "sadhya":
+            if table in ["sadhya", "sticker"]:
                 if student.is_in:
                     flash(
                         f'Already scanned at {student.entry_time.strftime("%H:%M:%S")}',
@@ -232,6 +238,48 @@ def index():
     )
 
 
+@app.route("/verify", methods=["GET", "POST"])
+# @limiter.limit("200 per minute")
+def verify():
+    if "logged_in" not in session:
+        return redirect(url_for("login"))
+
+    log = []
+    table = request.args.get("table", None)
+    reg_number = ""
+
+    if request.method == "POST":
+        reg_number = request.form["registration_number"].strip().upper()
+        table_obj = table_map[table]
+        student = table_obj.query.filter_by(registration_number=reg_number).first()
+
+        if not student:
+            flash("Not registered", "error")
+        else:
+            flash("Registered", "success")
+            if table == "sadhya":
+                if student.is_in:
+                    flash(
+                        f'Already scanned at {student.entry_time.strftime("%H:%M:%S")}',
+                        "error",
+                    )
+                else:
+                    flash("Not scanned yet.", "success")
+
+                log = get_log(reg_number, table)
+
+    for i, r in enumerate(log):
+        log[i].time = r.time.strftime("%H:%M:%S")
+
+    return render_template(
+        "verify.html",
+        tables=table_map.keys(),
+        table=table,
+        log=log[::-1],
+        reg_no=reg_number,
+    )
+
+
 @app.route("/add", methods=["GET", "POST"])
 def add():
     if "admin" not in session:
@@ -241,16 +289,54 @@ def add():
     reg_no = ""
     if request.method == "POST":
         reg_no = request.form["registration_number"].upper()
+
+        sticker_record = Sticker(registration_number=reg_no)
         entry_record = Entry(registration_number=reg_no)
+        sadhya_record = Sadhya(registration_number=reg_no)
         concert_record = Concert(registration_number=reg_no)
+
+        # response = "Already in database"
+
+        # try:
+        #     if "sticker" in request.form:
+        #         db.session.add(sticker_record)
+        #     response = "Successfully added to database"
+        # except sqlalchemy.exc.IntegrityError as e:
+        #     print("already in sticker")
+
+        # try:
+        #     if "entry" in request.form:
+        #         db.session.add(entry_record)
+        #     response = "Successfully added to database"
+        # except sqlalchemy.exc.IntegrityError as e:
+        #     print("already in entry")
+
+        # try:
+        #     if "sadhya" in request.form:
+        #         db.session.add(sadhya_record)
+        #     response = "Successfully added to database"
+        # except sqlalchemy.exc.IntegrityError as e:
+        #     print(e)
+
+        # try:
+        #     if "concert" in request.form:
+        #         db.session.add(concert_record)
+        #     response = "Successfully added to database"
+        # except sqlalchemy.exc.IntegrityError as e:
+        #     print(e)
+
         try:
+            db.session.add(sticker_record)
             db.session.add(entry_record)
+            db.session.add(sadhya_record)
             db.session.add(concert_record)
             db.session.commit()
             response = "Successfully added to database"
         except sqlalchemy.exc.IntegrityError as e:
             response = "Already in the database"
             print(e)
+
+        db.session.commit()
 
     return render_template("add.html", response=response, reg_no=reg_no)
 

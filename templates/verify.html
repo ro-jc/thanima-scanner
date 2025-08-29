@@ -32,7 +32,7 @@
       </div>
     </div>
     <h3>THANIMA - 2025</h3>
-    <h1>event entry</h1>
+    <h1>event registration verification</h1>
     <div class="container">
       {% for table_name in tables %}
         <a href="?table={{ table_name }}"
@@ -63,38 +63,5 @@
                 justify-content: center;
                 font-weight: 800;
                 font-size: large">{{ reg_no }}</div>
-    <div class="bottom_container">
-      <!-- <div id="in_count">In: {{ in_count%300 if table=='sadhya' else in_count }}</div> -->
-      <div id="in_count">In: {{ in_count }}</div>
-      <div id="log">
-        {% for record in log %}
-          <div class="{{ 'entry_record' if record.is_entry else 'exit_record' }}">{{ record.time }}</div>
-        {% endfor %}
-      </div>
-      <div id="out_count">Out: {{ out_count }}</div>
-    </div>
   </body>
-  <script>
-    function updateCount() {
-      let form = document.getElementById("verify");
-      if (!form) return;
-
-      let table = form.children[1].value;
-      let inCountViewer = document.getElementById('in_count');
-      let outCountViewer = document.getElementById('out_count');
-
-      fetch("/getCount/" + table)
-        .then((response) => response.json())
-        .then((json) => {
-          // let in_count = json['in_count'];
-          // if (in_count != 0 && in_count%300 == 0) {
-          //   alert("The 300th person has entered. In-count display has been reset to zero.");
-          // }
-          inCountViewer.innerHTML = "In: " + json['in_count'];
-          outCountViewer.innerHTML = "Out: " + json['out_count'];
-        })
-    }
-
-    var intervalId = window.setInterval(updateCount, 5000);
-  </script>
 </html>
