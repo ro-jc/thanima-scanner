@@ -1,8 +1,9 @@
 import csv
 import sqlite3
+from sys import argv
 
 
-def csv_to_sqlite(csv_file, db_file, table_names):
+def csv_to_sqlite(csv_file, db_file):
     table_names = ["entry", "concert", "sadhya", "sticker"]
 
     # Connect to SQLite database
@@ -73,8 +74,8 @@ def csv_to_sqlite(csv_file, db_file, table_names):
 
 
 if __name__ == "__main__":
-    db_file = "registrations.db"
+    db_file = argv[2]
 
-    csv_file = "registered.csv"
+    csv_file = argv[1]
 
     csv_to_sqlite(csv_file, db_file)
