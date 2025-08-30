@@ -270,7 +270,8 @@ def verify():
             flash("Not registered", "error")
         else:
             flash("Registered", "success")
-            if table == "sadhya":
+
+            if table in ["sadhya", "sticker"]:
                 if student.is_in:
                     flash(
                         f'Already scanned at {student.entry_time.strftime("%H:%M:%S")}',
@@ -278,7 +279,7 @@ def verify():
                     )
                 else:
                     flash("Not scanned yet.", "success")
-
+            else:
                 log = get_log(reg_number, table)
 
     for i, r in enumerate(log):
