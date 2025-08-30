@@ -329,14 +329,6 @@ def edit():
                     if record.count() > 0:
                         record.delete()
 
-                        # modify_record = ModifyLog(
-                        #     registration_number=reg_no,
-                        #     action="remove",
-                        #     table=key,
-                        #     when_modified=datetime.now(),
-                        # )
-                        # db.session.add(modify_record)
-
                         setattr(modify_record, key, True)
 
                         success_responses += [
@@ -350,14 +342,6 @@ def edit():
                         new_record = table_obj(registration_number=reg_no)
                         db.session.add(new_record)
 
-                        # modify_record = ModifyLog(
-                        #     registration_number=reg_no,
-                        #     action="add",
-                        #     table=key,
-                        #     when_modified=datetime.now(),
-                        # )
-                        # db.session.add(modify_record)
-
                         setattr(modify_record, key, True)
 
                         success_responses += [
@@ -366,7 +350,15 @@ def edit():
                     else:
                         failure_responses += [f"Already in '{key.capitalize()}'"]
 
-        db.session.add(modify_record)
+        if any(
+            (
+                modify_record.sticker,
+                modify_record.entry,
+                modify_record.sadhya,
+                modify_record.concert,
+            )
+        ):
+            db.session.add(modify_record)
         db.session.commit()
 
     global TOTAL_COUNTS
