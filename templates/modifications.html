@@ -1,49 +1,48 @@
 <!DOCTYPE html>
 <html lang="en">
-    <head>
-        <meta charset="UTF-8" />
-        <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-        <title>Scanner</title>
-        <link rel="stylesheet"
-              type="text/css"
-              href="{{ url_for('static', filename='style.css') }}">
-    </head>
-    <body>
-        <div class="header">
-            <div class="logo_div">
-                <img class="thanima_logo"
-                     src="{{ url_for('static', filename='images/logoOnly.png') }}"
-                     alt="">
-                {% if session["admin"] %}<div class="admin">Admin</div>{% endif %}
-            </div>
-            <div>
-                <a href='{{ url_for("index") }}' class="section_button">Home</a>
-            </div>
-            <div>
-                <a href='{{ url_for("verify") }}' class="section_button">Verify</a>
-            </div>
-            {% if session["admin"] %}
-                <div>
-                    <a href='{{ url_for("edit") }}' class="section_button">Edit</a>
-                </div>
-                <div>
-                    <a href='{{ url_for("modifications") }}' class="section_button">Modifications</a>
-                </div>
-            {% endif %}
-            <div>
-                <a href='{{ url_for("logout") }}' class="logout">Logout</a>
-            </div>
+
+<head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>Scanner</title>
+    <link rel="stylesheet" type="text/css" href="{{ url_for('static', filename='style.css') }}">
+</head>
+
+<body>
+    <div class="header">
+        <div class="logo_div">
+            <img class="thanima_logo" src="{{ url_for('static', filename='images/logoOnly.png') }}" alt="">
+            {% if session["admin"] %}<div class="admin">Admin</div>{% endif %}
         </div>
-        <h3>THANIMA - 2025</h3>
-        <h1>modifications</h1>
-        {% for record in log %}
-            <div class="modify_record">
-                {{ record.when_modified }} - {{ record.registration_number }} - {{ record.action }} -
-                {% if record.sticker %}<div class="table">sticker</div>{% endif %}
-                {% if record.entry %}<div class="table">entry</div>{% endif %}
-                {% if record.sadhya %}<div class="table">sadhya</div>{% endif %}
-                {% if record.concert %}<div class="table">concert</div>{% endif %}
-            </div>
-        {% endfor %}
-    </body>
+        <div>
+            <a href='{{ url_for("index") }}' class="section_button">Home</a>
+        </div>
+        <div>
+            <a href='{{ url_for("verify") }}' class="section_button">Verify</a>
+        </div>
+        {% if session["admin"] %}
+        <div>
+            <a href='{{ url_for("edit") }}' class="section_button">Edit</a>
+        </div>
+        <div>
+            <a href='{{ url_for("modifications") }}' class="section_button">Modifications</a>
+        </div>
+        {% endif %}
+        <div>
+            <a href='{{ url_for("logout") }}' class="logout">Logout</a>
+        </div>
+    </div>
+    <h3>THANIMA - 2025</h3>
+    <h1>modifications</h1>
+    {% for record in log %}
+    <div class="modify_record {{ record.action }}">
+        {{ record.when_modified }} - {{ record.registration_number }} - {{ record.action }} -
+        {% if record.sticker %}<div class="table">sticker</div>{% endif %}
+        {% if record.entry %}<div class="table">entry</div>{% endif %}
+        {% if record.sadhya %}<div class="table">sadhya</div>{% endif %}
+        {% if record.concert %}<div class="table">concert</div>{% endif %}
+    </div>
+    {% endfor %}
+</body>
+
 </html>

@@ -370,3 +370,17 @@ input[type="radio"] {
   display: flex;
   flex-direction: row;
 }
+.modify_record{
+  text-align: center;
+  background: #ffecd1df;
+  color: #000;
+  margin: 10px 25px;
+  padding: 4px 20px;
+  border-radius: 50px;
+}
+.add{
+  background: lightgreen;
+}
+.remove{
+  background: lightcoral;
+}
