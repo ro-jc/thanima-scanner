@@ -82,6 +82,18 @@ class ConcertLog(db.Model):
     # )
 
 
+class ModifyLog(db.Model):
+    __tablename__ = "modify_log"
+    registration_number = db.Column(db.CHAR(9), primary_key=True)
+    action = db.Column(db.VARCHAR(10))
+    sticker = db.Column(db.Boolean, default=False)
+    entry = db.Column(db.Boolean, default=False)
+    sadhya = db.Column(db.Boolean, default=False)
+    concert = db.Column(db.Boolean, default=False)
+    # table = db.Column(db.VARCHAR(10), primary_key=True)
+    when_modified = db.Column(db.DateTime, nullable=True, primary_key=True)
+
+
 table_map = {
     "sticker": Sticker,
     "entry": Entry,
@@ -304,12 +316,29 @@ def edit():
     if request.method == "POST":
         reg_no = request.form["registration_number"].upper()
 
+        modify_record = ModifyLog(
+            registration_number=reg_no,
+            action=request.form["action"],
+            when_modified=datetime.now(),
+        )
+
         for key in request.form.keys():
             if table_obj := table_map.get(key, None):
                 if request.form["action"] == "remove":
                     record = table_obj.query.filter_by(registration_number=reg_no)
                     if record.count() > 0:
                         record.delete()
+
+                        # modify_record = ModifyLog(
+                        #     registration_number=reg_no,
+                        #     action="remove",
+                        #     table=key,
+                        #     when_modified=datetime.now(),
+                        # )
+                        # db.session.add(modify_record)
+
+                        setattr(modify_record, key, True)
+
                         success_responses += [
                             f"Successfully removed from '{key.capitalize()}'"
                         ]
@@ -320,12 +349,24 @@ def edit():
                     if record.count() == 0:
                         new_record = table_obj(registration_number=reg_no)
                         db.session.add(new_record)
+
+                        # modify_record = ModifyLog(
+                        #     registration_number=reg_no,
+                        #     action="add",
+                        #     table=key,
+                        #     when_modified=datetime.now(),
+                        # )
+                        # db.session.add(modify_record)
+
+                        setattr(modify_record, key, True)
+
                         success_responses += [
                             f"Successfully added to '{key.capitalize()}'"
                         ]
                     else:
                         failure_responses += [f"Already in '{key.capitalize()}'"]
 
+        db.session.add(modify_record)
         db.session.commit()
 
     global TOTAL_COUNTS
@@ -337,6 +378,16 @@ def edit():
         success_responses=success_responses,
         failure_responses=failure_responses,
     )
+
+
+@app.route("/modifications", methods=["GET", "POST"])
+def modifications():
+    if "admin" not in session:
+        return redirect(url_for("index"))
+
+    log = db.session.query(ModifyLog).all()
+
+    return render_template("modifications.html", log=log)
 
 
 @app.route("/login", methods=["GET", "POST"])

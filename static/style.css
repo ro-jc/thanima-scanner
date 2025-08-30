@@ -366,3 +366,7 @@ input[type="radio"] {
   font-weight: 800;
   font-size: large
 }
+.modify_record {
+  display: flex;
+  flex-direction: row;
+}
