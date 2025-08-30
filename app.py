@@ -375,7 +375,7 @@ def edit():
 @app.route("/modifications", methods=["GET", "POST"])
 def modifications():
     if "logged_in" not in session:
-        return redirect(url_for("index"))
+        return redirect(url_for("login"))
 
     log = db.session.query(ModifyLog).all()
 
